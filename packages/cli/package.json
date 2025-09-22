@@ -1,0 +1,35 @@
+{
+  "name": "@baseline-toolkit/cli",
+  "version": "1.0.0",
+  "description": "CLI tool for Baseline feature checking",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "baseline-check": "./bin/baseline-check.js",
+    "baseline-upgrade": "./bin/baseline-upgrade.js"
+  },
+  "scripts": {
+    "build": "tsc && npm run build:bin",
+    "build:bin": "node build-bin.js",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist bin"
+  },
+  "dependencies": {
+    "@baseline-toolkit/core": "workspace:*",
+    "commander": "^12.0.0",
+    "chalk": "^5.3.0",
+    "glob": "^10.3.10",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.16",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.3.3"
+  }
+}

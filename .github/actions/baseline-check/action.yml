@@ -1,0 +1,103 @@
+name: 'Baseline Check'
+description: 'Check code for Baseline web feature compatibility'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  path:
+    description: 'Path to analyze (default: src/)'
+    required: false
+    default: 'src/'
+  config:
+    description: 'Path to baseline config file'
+    required: false
+  fail-on-risky:
+    description: 'Fail the action if risky features are found'
+    required: false
+    default: 'true'
+  comment-pr:
+    description: 'Post results as PR comment'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        npm ci
+        npm install -g @baseline-toolkit/cli
+
+    - name: Run baseline check
+      id: check
+      shell: bash
+      run: |
+        CONFIG_ARG=""
+        if [ -n "${{ inputs.config }}" ]; then
+          CONFIG_ARG="--config ${{ inputs.config }}"
+        fi
+        
+        FAIL_ARG=""
+        if [ "${{ inputs.fail-on-risky }}" = "false" ]; then
+          FAIL_ARG="--no-fail-on-risky"
+        fi
+        
+        baseline-check ${{ inputs.path }} \
+          $CONFIG_ARG \
+          $FAIL_ARG \
+          --json \
+          --output baseline-report.json
+        
+        # Store results for PR comment
+        echo "results<<EOF" >> $GITHUB_OUTPUT
+        cat baseline-report.json >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Comment PR
+      if: github.event_name == 'pull_request' && inputs.comment-pr == 'true'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = JSON.parse('${{ steps.check.outputs.results }}');
+          
+          let comment = '## 📊 Baseline Compatibility Report\n\n';
+          comment += `- **Files analyzed**: ${report.totalFiles}\n`;
+          comment += `- **Safety score**: ${report.safetyScore}% (${report.safeFeatures}/${report.totalFeatures} features)\n`;
+          
+          if (report.riskyFeatures > 0) {
+            comment += `- **⚠️ Risky features**: ${report.riskyFeatures}\n\n`;
+            comment += '### Risky Features Found\n\n';
+            
+            report.reports.forEach(r => {
+              if (r.report.risky.length > 0) {
+                comment += `**${r.file}**:\n`;
+                r.report.risky.forEach(feature => {
+                  const status = feature.baseline === false ? 'not baseline' : 'baseline low';
+                  comment += `- \`${feature.id}\` (${status})`;
+                  if (feature.mdn) {
+                    comment += ` - [📖 MDN](${feature.mdn})`;
+                  }
+                  comment += '\n';
+                });
+                comment += '\n';
+              }
+            });
+          } else {
+            comment += '- **✅ All features are Baseline-safe!**\n';
+          }
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
