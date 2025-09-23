@@ -146,23 +146,29 @@ export function createReport(
     const feature = features[detection.featureId];
     let baselineStatus: BaselineStatus = false;
 
-    if (feature?.status?.baseline) {
-      baselineStatus = feature.status.baseline;
-    } else if (detection.bcdKey) {
+    // ✅ Prefer BCD key lookup first
+    if (detection.bcdKey) {
       try {
         const status = getStatus(detection.featureId, detection.bcdKey);
         baselineStatus = status?.baseline || false;
       } catch {
-        // Feature not found in BCD, assume not baseline
+        // ignore if not found, fallback below
       }
     }
 
-    const isRisky = 
+    // 🔄 Fallback: feature-level baseline if no BCD info
+    if (!baselineStatus && feature?.status?.baseline) {
+      baselineStatus = feature.status.baseline;
+    }
+
+    // 🚨 Decide whether it's risky
+    const isRisky =
       (baselineStatus === false && config.rules.blockFalse) ||
       (baselineStatus === 'low' && !config.rules.allowLow);
 
     if (isRisky) {
       const support: BrowserSupport = {};
+
       if (feature?.status?.support) {
         support.chrome = feature.status.support.chrome;
         support.firefox = feature.status.support.firefox;
@@ -171,8 +177,8 @@ export function createReport(
       }
 
       const spec: string | undefined = Array.isArray(feature?.spec)
-      ? feature.spec[0] 
-      : feature?.spec;
+        ? feature.spec[0]
+        : feature?.spec;
 
       riskyFeatures.push({
         id: detection.featureId,
@@ -199,6 +205,7 @@ export function createReport(
     safetyScore,
   };
 }
+
 
 /**
  * Analyzes text content based on type

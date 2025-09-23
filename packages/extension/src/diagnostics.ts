@@ -16,10 +16,12 @@ export class BaselineDiagnosticsProvider {
     try {
       // Get file type
       const languageId = document.languageId;
-      let type: 'css' | 'js' = 'js';
+      let type: 'css' | 'js' | 'html' = 'js';
       
       if (languageId === 'css' || languageId === 'scss') {
         type = 'css';
+      } else if (languageId === 'html') {
+        type = 'html';
       }
 
       // Create analysis context
