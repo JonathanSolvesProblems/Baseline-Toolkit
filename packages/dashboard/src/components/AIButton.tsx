@@ -17,7 +17,7 @@ export function AIButton({ title, getPrompt }: AIButtonProps) {
         throw new Error('API_ROOT environment variable is not set');
       }
 
-      const res = await fetch(`${apiRoot}/api/ai`, {
+      const res = await fetch(`${apiRoot}/src/api/ai`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
