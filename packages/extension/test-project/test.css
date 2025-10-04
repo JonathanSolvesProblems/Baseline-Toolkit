@@ -1,0 +1,4 @@
+.foo {
+  float: left;
+  word-break: auto-phrase;
+}

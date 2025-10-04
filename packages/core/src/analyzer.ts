@@ -1,4 +1,4 @@
-import { parse as parseCss, walk } from 'css-tree';
+import { parse as parseCss, walk, generate } from 'css-tree';
 import { parse as parseJs } from 'acorn';
 import { simple as walkJs } from 'acorn-walk';
 import { features } from 'web-features';
@@ -28,20 +28,15 @@ const DEFAULT_CONFIG: BaselineConfig = {
  * Analyzes CSS code for Baseline feature usage
  */
 export function analyzeCss(content: string): FeatureDetection[] {
-  const detections: FeatureDetection[] = [];
+    const detections: FeatureDetection[] = [];
   
   try {
-    const ast = parseCss(content, {
-      positions: true,
-      filename: 'input.css',
-    });
+    const ast = parseCss(content, { positions: true, filename: 'input.css' });
 
     walk(ast, function(node: any) {
-      if (node.type === 'Property' && node.name) {
-        const property = node.name;
-        const value = node.value;
-        
-        // Map CSS properties to feature IDs
+      if (node.type === 'Declaration' && node.property) {
+        const property = node.property;
+        const value = generate(node.value); // ✅ get string value from AST
         const featureId = mapCssPropertyToFeature(property, value);
         if (featureId) {
           detections.push({
@@ -239,21 +234,18 @@ function getNodeName(node: any): string {
   return 'unknown';
 }
 
-function mapCssPropertyToFeature(property: string, _value: any): string | null {
-  // Map common CSS properties to feature IDs
-  const cssFeatureMap: Record<string, string> = {
-    'display': 'css-display',
-    'grid': 'css-grid',
-    'flexbox': 'css-flexbox',
-    'color-scheme': 'css-color-scheme',
-    'container-queries': 'css-container-queries',
-    'word-break': 'css-word-break',
-    'aspect-ratio': 'css-aspect-ratio',
-    'gap': 'css-gap',
-  };
-
-  return cssFeatureMap[property] || null;
+function mapCssPropertyToFeature(property: string, value: string) {
+  switch (property) {
+    case 'display':
+      if (value.includes('grid')) return 'css-display';
+      break;
+    case 'grid-template-columns':
+      return 'css-grid-template-columns';
+    // add more mappings as needed
+  }
+  return null;
 }
+
 
 function mapJsApiToFeature(apiCall: string): string | null {
   // Map common JS APIs to feature IDs

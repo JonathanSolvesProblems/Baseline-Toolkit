@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Baseline Test</title>
+  <style>
+    .example {
+      float: left; /* risky: CSS float usage */
+      word-break: auto-phrase; /* risky: not Baseline */
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const xhr = new XMLHttpRequest(); // risky: legacy API
+    xhr.open('GET', '/api/data');
+    xhr.send();
+
+    const el = document.getElementById('myDiv'); // risky: use querySelector instead
+    console.log(el);
+
+    if ('IdleDetector' in window) {
+      console.log('IdleDetector is supported');
+    } else {
+      console.warn('IdleDetector fallback');
+    }
+  </script>
+</body>
+</html>

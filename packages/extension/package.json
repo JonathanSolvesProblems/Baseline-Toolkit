@@ -1,5 +1,5 @@
 {
-  "name": "baseline-toolkit-vscode",
+  "name": "@baseline-toolkit/extension",
   "displayName": "Baseline Toolkit",
   "description": "Real-time linting for web feature Baseline compatibility",
   "version": "1.0.0",
@@ -19,6 +19,8 @@
     "javascript"
   ],
   "activationEvents": [
+    "onCommand:baselineToolkit.checkCurrentFile",
+    "onCommand:baselineToolkit.checkWorkspace",
     "onLanguage:css",
     "onLanguage:scss",
     "onLanguage:javascript",
@@ -68,18 +70,34 @@
     "languages": [
       {
         "id": "css",
-        "aliases": ["CSS"],
-        "extensions": [".css", ".scss", ".sass"]
+        "aliases": [
+          "CSS"
+        ],
+        "extensions": [
+          ".css",
+          ".scss",
+          ".sass"
+        ]
       },
       {
         "id": "javascript",
-        "aliases": ["JavaScript"],
-        "extensions": [".js", ".jsx"]
+        "aliases": [
+          "JavaScript"
+        ],
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
       },
       {
         "id": "typescript",
-        "aliases": ["TypeScript"],
-        "extensions": [".ts", ".tsx"]
+        "aliases": [
+          "TypeScript"
+        ],
+        "extensions": [
+          ".ts",
+          ".tsx"
+        ]
       }
     ]
   },

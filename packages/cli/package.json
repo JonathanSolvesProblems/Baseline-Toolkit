@@ -13,7 +13,7 @@
     "build": "tsc && npm run build:bin",
     "build:bin": "node build-bin.js",
     "dev": "tsc --watch",
-    "test": "jest",
+    "test": "vitest run",
     "lint": "eslint src/**/*.ts",
     "type-check": "tsc --noEmit",
     "clean": "rimraf dist bin"

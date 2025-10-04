@@ -1,2 +1,10 @@
 #!/usr/bin/env node
-import("../dist/upgrade.js");
+// Auto-generated stub to run CLI from dist
+(async () => {
+  try {
+    await import("../dist/upgrade.js");
+  } catch (err) {
+    console.error('Failed to run CLI:', err);
+    process.exit(1);
+  }
+})();

@@ -12,7 +12,7 @@ export function activate(context: vscode.ExtensionContext): void {
   diagnosticsProvider = new BaselineDiagnosticsProvider();
 
   // Register providers for different file types
-  const supportedLanguages = ['css', 'scss', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact'];
+  const supportedLanguages = ['css', 'scss', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'html'];
   
   // Register hover provider
   const hoverProvider = new BaselineHoverProvider();

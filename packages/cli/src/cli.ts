@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { glob } from 'glob';
 import { readFileSync, writeFileSync } from 'fs';
-import { join, extname, relative } from 'path';
+import { extname, relative } from 'path';
 import { analyzeFile, loadConfig, type BaselineReport, type AnalysisContext } from '@baseline-toolkit/core';
 
 const program = new Command();
@@ -32,14 +32,15 @@ program
       
       // Find files to analyze
       const includePatterns = options.include.split(',');
-      const excludePatterns = options.exclude.split(',');
       
       const allFiles = new Set<string>();
       
-      for (const path of paths) {
+      const ignorePatterns = options.exclude.split(','); // string[]
+
+      for (const p of paths) {
         for (const pattern of includePatterns) {
-          const files = await glob(join(path, pattern), {
-            ignore: excludePatterns,
+          const files = await glob(`${p.replace(/\\/g, '/')}/${pattern}`, {
+            ignore: ignorePatterns.map((s: string) => s.replace(/\\/g, '/')), // explicitly type s
             absolute: true,
           });
           files.forEach(file => allFiles.add(file));

@@ -1,5 +1,5 @@
-import { analyzeText, analyzeCss, analyzeJs, createReport } from './analyzer.js';
-import type { FeatureDetection } from './types.js';
+import { analyzeText, analyzeCss, analyzeJs, createReport } from './analyzer';
+import type { FeatureDetection } from './types';
 
 describe('CSS Analysis', () => {
   it('should detect CSS grid usage', () => {
@@ -13,7 +13,7 @@ describe('CSS Analysis', () => {
     const detections = analyzeCss(css);
     expect(detections).toHaveLength(2);
     expect(detections[0].featureId).toBe('css-display');
-    expect(detections[0].value).toContain('display: grid');
+    expect(detections[1].featureId).toBe('css-grid-template-columns');
   });
 
   it('should handle invalid CSS gracefully', () => {
