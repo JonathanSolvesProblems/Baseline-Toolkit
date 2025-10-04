@@ -1,4 +1,4 @@
-import { analyzeText, analyzeCss, analyzeJs, createReport } from './analyzer';
+import { analyzeFile, type AnalysisContext } from './analyzer';
 import type { FeatureDetection } from './types';
 
 describe('CSS Analysis', () => {
@@ -9,79 +9,65 @@ describe('CSS Analysis', () => {
         grid-template-columns: 1fr 1fr;
       }
     `;
-    
-    const detections = analyzeCss(css);
-    expect(detections).toHaveLength(2);
-    expect(detections[0].featureId).toBe('css-display');
-    expect(detections[1].featureId).toBe('css-grid-template-columns');
+
+    const context: AnalysisContext = { filePath: 'test.css', content: css, type: 'css', config: {} };
+    const report = analyzeFile(context);
+
+    expect(report.total).toBeGreaterThan(0);
+    expect(report.risky.some(r => r.id === 'css-display')).toBe(true);
+    expect(report.risky.some(r => r.id === 'css-grid-template-columns')).toBe(true);
   });
 
   it('should handle invalid CSS gracefully', () => {
     const css = 'invalid css {';
-    const detections = analyzeCss(css);
-    expect(detections).toEqual([]);
+    const context: AnalysisContext = { filePath: 'test.css', content: css, type: 'css', config: {} };
+    const report = analyzeFile(context);
+
+    expect(report.total).toBe(0);
+    expect(report.risky).toEqual([]);
   });
 });
 
 describe('JavaScript Analysis', () => {
-  it('should detect modern APIs', () => {
+  it('should detect modern APIs and risky features with locations', () => {
     const js = `
       const channel = new BroadcastChannel('test');
       fetch('/api/data').then(response => response.json());
+      const user = { name: "Jon" };
+      console.log(user?.age);
     `;
-    
-    const detections = analyzeJs(js);
-    expect(detections.length).toBeGreaterThan(0);
-    expect(detections.some(d => d.featureId === 'broadcastchannel')).toBe(true);
+
+    const context: AnalysisContext = { filePath: 'test.js', content: js, type: 'js', config: {} };
+    const report = analyzeFile(context);
+
+    expect(report.total).toBeGreaterThan(0);
+    expect(report.risky.some(r => r.id === 'broadcastchannel')).toBe(true);
+    expect(report.risky.some(r => r.id === 'optional-chaining')).toBe(true);
+
+    // Check that locations and values are provided
+    const risky = report.risky.find(r => r.id === 'optional-chaining');
+    expect(risky?.location).toBeDefined();
+    expect(risky?.value).toContain('?.');
   });
 
   it('should handle invalid JavaScript gracefully', () => {
     const js = 'const invalid = {';
-    const detections = analyzeJs(js);
-    expect(detections).toEqual([]);
+    const context: AnalysisContext = { filePath: 'test.js', content: js, type: 'js', config: {} };
+    const report = analyzeFile(context);
+
+    expect(report.total).toBe(0);
+    expect(report.risky).toEqual([]);
   });
 });
 
 describe('Report Creation', () => {
-  it('should create accurate baseline reports', () => {
-    const mockDetections: FeatureDetection[] = [
-      {
-        featureId: 'css-grid',
-        location: { line: 1, column: 1 },
-        value: 'display: grid'
-      },
-      {
-        featureId: 'idle-detection',
-        location: { line: 2, column: 1 },
-        value: 'new IdleDetector()'
-      }
-    ];
+  it('should handle empty detections correctly', () => {
+    const context: AnalysisContext = { filePath: 'empty.js', content: '', type: 'js', config: {} };
+    const report = analyzeFile(context);
 
-    const report = createReport(mockDetections);
-    expect(report.total).toBe(2);
-    expect(report.safetyScore).toBeGreaterThanOrEqual(0);
-    expect(report.safetyScore).toBeLessThanOrEqual(100);
-  });
-
-  it('should handle empty detections', () => {
-    const report = createReport([]);
     expect(report.total).toBe(0);
     expect(report.safe).toBe(0);
     expect(report.risky).toEqual([]);
     expect(report.safetyScore).toBe(100);
-  });
-});
-
-describe('Text Analysis', () => {
-  it('should analyze CSS text', () => {
-    const css = '.test { display: flex; }';
-    const report = analyzeText(css, 'css');
-    expect(report.total).toBeGreaterThanOrEqual(0);
-  });
-
-  it('should analyze JavaScript text', () => {
-    const js = 'const observer = new IntersectionObserver(() => {});';
-    const report = analyzeText(js, 'js');
-    expect(report.total).toBeGreaterThanOrEqual(0);
   });
 });

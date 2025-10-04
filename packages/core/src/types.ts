@@ -13,6 +13,21 @@ export interface BrowserSupport {
   edge?: string;
 }
 
+export interface SourceLocation {
+  line?: number;
+  column?: number;
+  endLine?: number;
+  endColumn?: number;
+  start?: {
+    line: number;
+    column: number;
+  };
+  end?: {
+    line: number;
+    column: number;
+  };
+}
+
 /**
  * Risky feature information
  */
@@ -33,6 +48,12 @@ export interface RiskyFeature {
   baselineLowDate?: string;
   /** Expected baseline high date */
   baselineHighDate?: string;
+
+  /** Approximate source location (line/column) */
+  location?: SourceLocation;
+
+  /** The specific code snippet or value triggering detection */
+  value?: string;
 }
 
 /**
@@ -75,12 +96,8 @@ export interface FeatureDetection {
   /** BCD key for the feature */
   bcdKey?: string;
   /** Source location */
-  location: {
-    line: number;
-    column: number;
-    endLine?: number;
-    endColumn?: number;
-  };
+  location: SourceLocation;
+
   /** Raw value from code */
   value: string;
 }

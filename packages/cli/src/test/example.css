@@ -1,0 +1,11 @@
+/* css-not-baseline.css */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: subgrid; /* Subgrid is newly available / limited baseline */
+  container-type: inline-size; /* Container queries */
+}
+
+.foo {
+  word-break: auto-phrase; /* Non-Baseline value */
+}

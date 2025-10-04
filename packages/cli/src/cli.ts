@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { glob } from 'glob';
 import { readFileSync, writeFileSync } from 'fs';
-import { extname, relative } from 'path';
+import { extname, relative, resolve } from 'path';
 import { analyzeFile, loadConfig, type BaselineReport, type AnalysisContext } from '@baseline-toolkit/core';
 
 const program = new Command();
@@ -30,27 +30,23 @@ program
       // Load configuration
       const config = loadConfig(options.config, process.cwd());
       
-      // Find files to analyze
-      const includePatterns = options.include.split(',');
-      
       const allFiles = new Set<string>();
-      
-      const ignorePatterns = options.exclude.split(','); // string[]
 
-      for (const p of paths) {
-        for (const pattern of includePatterns) {
-          const files = await glob(`${p.replace(/\\/g, '/')}/${pattern}`, {
-            ignore: ignorePatterns.map((s: string) => s.replace(/\\/g, '/')), // explicitly type s
-            absolute: true,
-          });
-          files.forEach(file => allFiles.add(file));
-        }
-      }
+      for (let p of paths) {
+      const absPath = resolve(process.cwd(), p); // normalize
+      const pattern = `${absPath}/**/*.{js,ts,jsx,tsx,css,scss}`;
+      const files = await glob(pattern, { absolute: true });
+      files.forEach(f => allFiles.add(f));
+    }
+
 
       if (allFiles.size === 0) {
-        spinner.fail('No files found to analyze');
+        console.log('No files found!');
         process.exit(1);
       }
+
+      console.log('Files found:', Array.from(allFiles));
+
 
       spinner.text = `Analyzing ${allFiles.size} files...`;
       
@@ -155,10 +151,19 @@ function printReport(summary: any): void {
       console.log(chalk.dim(`\n  ${file}:`));
       risky.forEach(feature => {
         const status = feature.baseline === false ? 'not baseline' : 'baseline low';
-        console.log(`    - ${feature.id} (${chalk.red(status)})`);
-        if (feature.mdn) {
-          console.log(chalk.dim(`      📖 ${feature.mdn}`));
-        }
+        const loc =
+        feature.location && feature.location.line
+          ? ` (line ${feature.location.line}, col ${feature.location.column ?? 1})`
+          : '';
+
+      console.log(`    - ${feature.id}${loc} (${chalk.red(status)})`);
+
+      if (feature.value) {
+        console.log(chalk.dim(`      ↳ ${feature.value}`));
+      }
+      if (feature.mdn) {
+        console.log(chalk.dim(`      📖 ${feature.mdn}`));
+      }
       });
     });
   } else {
