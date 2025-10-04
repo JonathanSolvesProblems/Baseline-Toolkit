@@ -1,0 +1,48 @@
+{
+  "totalFiles": 5,
+  "totalFeatures": 8,
+  "safeFeatures": 6,
+  "riskyFeatures": 2,
+  "safetyScore": 75,
+  "reports": [
+    {
+      "file": "src\\test\\example.js",
+      "report": {
+        "safe": 1,
+        "risky": [
+          {
+            "id": "optional-chaining",
+            "baseline": false,
+            "support": {},
+            "location": {
+              "line": 5,
+              "column": 12
+            },
+            "value": "?."
+          },
+          {
+            "id": "broadcastchannel",
+            "baseline": false,
+            "support": {},
+            "location": {
+              "line": 8,
+              "column": 16
+            },
+            "value": "new BroadcastChannel()"
+          }
+        ],
+        "total": 3,
+        "safetyScore": 33
+      }
+    },
+    {
+      "file": "src\\test\\example.css",
+      "report": {
+        "safe": 5,
+        "risky": [],
+        "total": 5,
+        "safetyScore": 100
+      }
+    }
+  ]
+}

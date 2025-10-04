@@ -8,11 +8,15 @@ interface FileReportsListProps {
 
 export function FileReportsList({ reports, filters }: FileReportsListProps) {
   const filteredReports = reports.filter((report) => {
+    // If there are no risky features and "showSafe" is false, skip this report
     if (report.report.risky.length === 0 && !filters.showSafe) return false;
-    const hasLow = report.report.risky.some((f) => f.baseline === 'low');
+
+    // Check if there are any risky features (baseline === false)
     const hasFalse = report.report.risky.some((f) => f.baseline === false);
-    if (hasLow && !filters.showLow) return false;
+
+    // If there are risky features but "showFalse" is false, skip this report
     if (hasFalse && !filters.showFalse) return false;
+
     return true;
   });
 
@@ -81,7 +85,7 @@ export function FileReportsList({ reports, filters }: FileReportsListProps) {
                 <div className="space-y-1">
                   {report.report.risky.slice(0, 3).map((feature, idx) => (
                     <div key={idx} className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">{feature.name || feature.id}</span>
+                      <span className="text-gray-600">{feature.id}</span>
                       <span
                         className={`px-2 py-0.5 rounded text-xs ${
                           feature.baseline === false
@@ -89,7 +93,7 @@ export function FileReportsList({ reports, filters }: FileReportsListProps) {
                             : 'bg-warning-100 text-warning-700'
                         }`}
                       >
-                        {feature.baseline === false ? 'Not Baseline' : 'Baseline Low'}
+                        {feature.baseline === false ? 'Not Baseline' : 'Baseline Safe'}
                       </span>
                     </div>
                   ))}

@@ -4,8 +4,8 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { glob } from 'glob';
-import { readFileSync, writeFileSync } from 'fs';
-import { extname, relative, resolve } from 'path';
+import { readFileSync, writeFileSync, mkdirSync, existsSync  } from 'fs';
+import { extname, relative, resolve, dirname } from 'path';
 import { analyzeFile, loadConfig, type BaselineReport, type AnalysisContext } from '@baseline-toolkit/core';
 
 const program = new Command();
@@ -111,11 +111,18 @@ program
       }
 
       // Save to file if requested
-      if (options.output) {
-        writeFileSync(options.output, JSON.stringify(summary, null, 2));
-        console.log(chalk.green(`Report saved to ${options.output}`));
+      const outPath = options.output
+        ? resolve(process.cwd(), options.output)
+        : resolve(process.cwd(), 'core/baseline-report.json');
+
+      const outDir = dirname(outPath);
+      if (!existsSync(outDir)) {
+        mkdirSync(outDir, { recursive: true });
       }
 
+      writeFileSync(outPath, JSON.stringify(summary, null, 2));
+      console.log(chalk.green(`📁 Report saved to ${outPath}`));
+      
       // Exit with appropriate code
       if (options.failOnRisky && totalRisky > 0) {
         process.exit(1);

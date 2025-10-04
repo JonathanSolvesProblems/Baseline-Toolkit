@@ -12,7 +12,7 @@
   "scripts": {
     "build": "tsc && npm run build:bin",
     "build:bin": "node build-bin.js",
-    "dev": "tsc --watch",
+    "dev": "node ./bin/baseline-check.js ./src --json --watch",
     "test": "vitest run",
     "lint": "eslint src/**/*.ts",
     "type-check": "tsc --noEmit",

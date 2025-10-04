@@ -15,7 +15,7 @@ export function RiskyFeaturesList({ reports, filters }: RiskyFeaturesListProps) 
   );
 
   const filteredFeatures = allRiskyFeatures.filter((feature) => {
-    if (feature.baseline === 'low' && !filters.showLow) return false;
+    // Only filter out features with baseline === false if showFalse is disabled
     if (feature.baseline === false && !filters.showFalse) return false;
     return true;
   });
