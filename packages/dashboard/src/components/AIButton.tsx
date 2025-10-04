@@ -12,7 +12,12 @@ export function AIButton({ title, getPrompt }: AIButtonProps) {
   const handleAnalyze = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/ai', {
+      const apiRoot = process.env.API_ROOT;
+      if (!apiRoot) {
+        throw new Error('API_ROOT environment variable is not set');
+      }
+
+      const res = await fetch(`${apiRoot}/api/ai`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

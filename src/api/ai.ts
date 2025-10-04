@@ -1,4 +1,3 @@
-// src/api/ai.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import ModelClient, { isUnexpected } from '@azure-rest/ai-inference';
 import { AzureKeyCredential } from '@azure/core-auth';
@@ -13,7 +12,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!token) {
         throw new Error('GITHUB_TOKEN is not set in environment variables');
     }
-    
+
     const client = ModelClient(endpoint, new AzureKeyCredential(token));
 
     // Example: you could pass your dashboard data from the frontend
