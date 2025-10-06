@@ -14,7 +14,7 @@ export function AIButton({ title, getPrompt }: AIButtonProps) {
   const handleAnalyze = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/api/ai', {
+      const res = await fetch('https://baseline-toolkit-api.vercel.app/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: getPrompt() }),

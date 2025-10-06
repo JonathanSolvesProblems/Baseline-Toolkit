@@ -1,0 +1,15 @@
+{
+  "name": "baseline-toolkit-api",
+  "version": "1.0.0",
+  "description": "Serverless backend API for the Baseline Toolkit (Vercel)",
+  "type": "module",
+  "main": "ai.ts",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "@vercel/node": "latest",
+    "@azure-rest/ai-inference": "latest",
+    "@azure/core-auth": "latest"
+  }
+}
