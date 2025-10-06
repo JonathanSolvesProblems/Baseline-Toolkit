@@ -2,6 +2,8 @@
 
 A comprehensive monorepo toolkit for helping developers safely adopt modern web features using [Baseline](https://web.dev/baseline/) data. This professional-grade developer toolkit provides CLI analysis, CI/CD integration, visual reporting, and upgrade guidance.
 
+Demo Video: [Baseline Toolkit | Baseline Tooling Hackathon Submission](https://www.youtube.com/watch?v=K_469fAcbE0)
+
 ---
 
 ## 🚀 Features
@@ -31,7 +33,7 @@ Shared analysis engine powering all tools.
 
 **Key Features:**
 
-- CSS and JavaScript AST parsing using CSSTree and Acorn
+- HTML, CSS and JavaScript AST parsing using CSSTree and Acorn
 - Integration with `web-features` and `compute-baseline`
 - TypeScript-first with full type definitions
 - Configurable analysis rules and feature filtering
@@ -41,11 +43,14 @@ Shared analysis engine powering all tools.
 Command-line tool for project analysis and JSON report generation.
 
 ```bash
-# Build the CLI
-pnpm build
+# Navigate to the CLI package
+cd packages/cli
 
-# Run CLI from packages/cli folder to analyze your project
-node bin/baseline-check.js src/test/ --json
+# Install dependencies if you haven't already
+pnpm install
+
+# Run the CLI to analyze your project and generate a JSON report
+node bin/baseline-check.js <path-to-your-project> --json
 ```
 
 # With custom configuration
@@ -77,7 +82,8 @@ Web dashboard for visualizing Baseline JSON reports.
 
 ### `@baseline-toolkit/extension` (VS Code)
 
-Real-time linting extension (currently in development).
+Real-time linting extension (currently in development - next release).
+As well as automatic analyzer of code base solution and renders it in dashboard automatically (currently in development - next release)
 
 **Planned Features:**
 
@@ -98,7 +104,7 @@ Real-time linting extension (currently in development).
 
 ```bash
 # Clone repository
-git clone <repository-url>
+git clone https://github.com/JonathanSolvesProblems/Baseline-Toolkit.git
 cd baseline-toolkit
 pnpm install
 
@@ -209,5 +215,5 @@ JSDoc for public APIs
 MIT License — see LICENSE file.
 🔗 Links
 
-- [https://web.dev/baseline/](Baseline)
-- [https://github.com/web-platform-dx/web-features](Web Features Database)
+- [Baseline](https://web.dev/baseline/)
+- [Web Features Database](https://github.com/web-platform-dx/web-features)
