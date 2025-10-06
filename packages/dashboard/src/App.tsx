@@ -36,14 +36,14 @@ function App() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="btn-secondary">
+              {/* <button className="btn-secondary">
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
-              </button>
-              <button className="btn-primary">
+              </button> */}
+              {/* <button className="btn-primary">
                 <TrendingUp className="h-4 w-4 mr-2" />
                 Export Report
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

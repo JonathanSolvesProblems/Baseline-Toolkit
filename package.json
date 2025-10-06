@@ -13,7 +13,8 @@
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
     "type-check": "pnpm -r type-check",
-    "clean": "pnpm -r clean"
+    "clean": "pnpm -r clean",
+    "server": "node src/api/server.ts"
   },
   "devDependencies": {
     "@types/css-tree": "^2.3.10",
@@ -35,6 +36,11 @@
   "dependencies": {
     "@azure-rest/ai-inference": "1.0.0-beta.6",
     "@azure/core-auth": "^1.10.1",
-    "css-tree": "^3.1.0"
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "css-tree": "^3.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "react-markdown": "^10.1.0"
   }
 }
