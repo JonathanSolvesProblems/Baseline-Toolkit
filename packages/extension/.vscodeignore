@@ -1,0 +1,21 @@
+# Exclude unnecessary folders
+.git
+.vscode
+src/
+test/
+coverage/
+scripts/
+
+# Exclude dependency clutter
+node_modules/**
+node_modules/@types
+node_modules/.bin
+dist/node_modules/**
+
+# Build artifacts
+*.map
+
+# Misc
+tsconfig.json
+jest.config.js
+.eslintrc.js

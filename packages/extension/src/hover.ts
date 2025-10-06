@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { analyzeFile, type AnalysisContext } from '@baseline-toolkit/core';
+import { analyzeFile, type AnalysisContext } from '../dist_core';
 
 export class BaselineHoverProvider implements vscode.HoverProvider {
   public provideHover(

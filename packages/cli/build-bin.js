@@ -15,7 +15,7 @@ files.forEach(f => {
   const content = `#!/usr/bin/env node
 // Auto-generated stub to run CLI from dist
 (async () => {
-  try {
+  try {e
     await import("${f.importPath}");
   } catch (err) {
     console.error('Failed to run CLI:', err);

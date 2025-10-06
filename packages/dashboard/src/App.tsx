@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Shield,
   FileText,
@@ -11,20 +11,53 @@ import { RiskyFeaturesList } from './components/RiskyFeaturesList';
 import { FileReportsList } from './components/FileReportsList';
 import { FilterPanel } from './components/FilterPanel';
 import type { DashboardData, FilterOptions } from './types';
-
-// Import the generated JSON directly
-
-import reportData from '../../cli/core/baseline-report.json';
 import { AIButton } from './components/AIButton';
 
 function App() {
-  const [data] = useState<DashboardData>(reportData);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [filters, setFilters] = useState<FilterOptions>({
     showSafe: true,
     showLow: true,
     showFalse: true,
   });
 
+  // Dynamically load report from URL query param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const reportParam = params.get('report');
+
+    if (reportParam) {
+      try {
+        // Decode base64 JSON from query param
+        const json = JSON.parse(atob(decodeURIComponent(reportParam)));
+        setData(json);
+      } catch (err) {
+        console.error('Failed to parse report JSON:', err);
+      }
+    }
+  }, []);
+
+  // Friendly message if no report is loaded
+  if (!data) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <h1 className="text-2xl font-semibold text-gray-900 mb-4">No Baseline Report Loaded</h1>
+        <p className="text-gray-600 mb-6 text-center max-w-md">
+          Please use the VS Code Baseline Toolkit extension to generate a report for your workspace.
+          Once generated, your personalized report will appear here.
+        </p>
+        <a
+          href="https://marketplace.visualstudio.com/items?itemName=your-extension-id"
+          target="_blank"
+          className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors"
+        >
+          Install Extension
+        </a>
+      </div>
+    );
+  }
+
+  // Render the normal dashboard if data is available
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -39,16 +72,6 @@ function App() {
                 <h1 className="text-xl font-semibold text-gray-900">Baseline Toolkit</h1>
                 <p className="text-sm text-gray-500">Web Feature Compatibility Dashboard</p>
               </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              {/* <button className="btn-secondary">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </button> */}
-              {/* <button className="btn-primary">
-                <TrendingUp className="h-4 w-4 mr-2" />
-                Export Report
-              </button> */}
             </div>
           </div>
         </div>
@@ -118,7 +141,7 @@ function App() {
                   <AIButton
                     title="Generate Full Report"
                     getPrompt={() =>
-                      `Analyze this baseline report and suggest improvements: ${JSON.stringify(reportData)}`
+                      `Analyze this baseline report and suggest improvements: ${JSON.stringify(data)}`
                     }
                   />
                   <div className="text-sm text-gray-500 mt-1">
@@ -130,7 +153,7 @@ function App() {
                   <AIButton
                     title="Check New Files"
                     getPrompt={() =>
-                      `Scan these new files for risky features and suggest improvements: ${JSON.stringify(reportData)}`
+                      `Scan these new files for risky features and suggest improvements: ${JSON.stringify(data)}`
                     }
                   />
                   <div className="text-sm text-gray-500 mt-1">Scan workspace for changes</div>
@@ -140,7 +163,7 @@ function App() {
                   <AIButton
                     title="Upgrade Suggestions"
                     getPrompt={() =>
-                      `Given this baseline report, provide upgrade suggestions for risky features: ${JSON.stringify(reportData)}`
+                      `Given this baseline report, provide upgrade suggestions for risky features: ${JSON.stringify(data)}`
                     }
                   />
                   <div className="text-sm text-gray-500 mt-1">

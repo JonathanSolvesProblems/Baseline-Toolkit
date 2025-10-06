@@ -80,47 +80,48 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   // -------------------------
-  // NEW: Generate JSON + Open Dashboard
+  // Generate JSON + Open Dashboard
   // -------------------------
   context.subscriptions.push(
-    vscode.commands.registerCommand('baselineToolkit.generateJSONAndOpenDashboard', async () => {
-      const workspaceFolders = vscode.workspace.workspaceFolders;
-      if (!workspaceFolders) {
-        vscode.window.showWarningMessage('No workspace folder open');
-        return;
-      }
+  vscode.commands.registerCommand('baselineToolkit.generateJSONAndOpenDashboard', async () => {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders) {
+      vscode.window.showWarningMessage('No workspace folder open.');
+      return;
+    }
 
-      vscode.window.withProgress({
-        location: vscode.ProgressLocation.Notification,
-        title: 'Generating Baseline JSON...',
-        cancellable: false
-      }, async () => {
-        try {
-          const workspacePath = workspaceFolders[0].uri.fsPath;
+    const workspacePath = workspaceFolders[0].uri.fsPath;
 
-          // Run the CLI command using pnpm filter
-          // Adjust path if your CLI command is different
-          const cliCommand = `pnpm --filter cli run generate --workspace-root`;
-          exec(cliCommand, { cwd: workspacePath }, (err, stdout, stderr) => {
-            if (err) {
-              vscode.window.showErrorMessage(`Error generating JSON: ${stderr}`);
-              console.error(err);
-              return;
-            }
-            console.log(stdout);
-            vscode.window.showInformationMessage('Baseline JSON generated successfully!');
+    // Default folder to analyze (adjust as needed)
+    const defaultAnalyzePath = vscode.Uri.joinPath(workspaceFolders[0].uri, 'src');
+    const analyzePath = defaultAnalyzePath.fsPath;
 
-            // Open dashboard in browser (replace with Vercel URL or localhost)
-            const dashboardUrl = 'https://your-dashboard-url.vercel.app'; // <-- replace with hosted URL
-            vscode.env.openExternal(vscode.Uri.parse(dashboardUrl));
-          });
-        } catch (err) {
-          vscode.window.showErrorMessage(`Unexpected error: ${err}`);
-          console.error(err);
-        }
+    await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: 'Generating Baseline JSON...',
+      cancellable: false
+    }, () => {
+      return new Promise<void>((resolve, reject) => {
+        const cliCommand = `node ./packages/cli/build-bin.js "${analyzePath}"`;
+
+        exec(cliCommand, { cwd: workspacePath }, (err, stdout, stderr) => {
+          if (err) {
+            vscode.window.showErrorMessage(`Error generating JSON: ${stderr}`);
+            console.error(err);
+            reject(err);
+            return;
+          }
+
+          console.log(stdout);
+          vscode.window.showInformationMessage('✅ Baseline JSON generated successfully! Opening dashboard...');
+          const dashboardUrl = 'https://baseline-toolkit-dashboard.vercel.app';
+          vscode.env.openExternal(vscode.Uri.parse(dashboardUrl));
+          resolve();
+        });
       });
-    })
-  );
+    });
+  })
+);
 
   // -------------------------
   // Document listeners
@@ -141,6 +142,7 @@ export function activate(context: vscode.ExtensionContext): void {
     })
   );
 
+ 
   // Check all open documents on activation
   vscode.workspace.textDocuments.forEach(document => {
     if (isSupported(document.languageId)) {
@@ -148,6 +150,8 @@ export function activate(context: vscode.ExtensionContext): void {
     }
   });
 }
+
+
 
 export function deactivate(): void {
   if (diagnosticsProvider) {
