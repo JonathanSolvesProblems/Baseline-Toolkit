@@ -7,17 +7,28 @@ const endpoint = 'https://models.github.ai/inference';
 const model = 'deepseek/DeepSeek-V3-0324';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  try {
-    if (req.method !== 'POST') {
-      return res.status(405).json({ error: 'Method not allowed' });
-    }
+  // Handle OPTIONS preflight
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(204).end();
+  }
 
+  // Only POST allowed
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Allow CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  try {
     if (!token) {
       throw new Error('GITHUB_TOKEN is not set in environment variables');
     }
 
     const client = ModelClient(endpoint, new AzureKeyCredential(token));
-
     const userPrompt = req.body?.prompt || 'Summarize the baseline report';
 
     const response = await client.path('/chat/completions').post({
