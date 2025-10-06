@@ -1,5 +1,5 @@
 {
-  "name": "baseline-toolkit-extension",
+  "name": "@baseline-toolkit/extension",
   "displayName": "Baseline Toolkit",
   "description": "Real-time linting for web feature Baseline compatibility in VS Code.",
   "version": "1.0.1",

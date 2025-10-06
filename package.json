@@ -1,5 +1,5 @@
 {
-  "name": "baseline-toolkit",
+  "name": "baseline-toolkit-extension",
   "version": "1.0.0",
   "description": "A comprehensive toolkit for safely adopting modern web features using Baseline data",
   "private": true,
