@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { BaselineDiagnosticsProvider } from './diagnostics.js';
 import { BaselineHoverProvider } from './hover.js';
 import { BaselineCodeActionProvider } from './codeActions.js';
+import { exec } from 'child_process';
 
 let diagnosticsProvider: BaselineDiagnosticsProvider;
 
@@ -11,9 +12,8 @@ export function activate(context: vscode.ExtensionContext): void {
   // Initialize diagnostics provider
   diagnosticsProvider = new BaselineDiagnosticsProvider();
 
-  // Register providers for different file types
   const supportedLanguages = ['css', 'scss', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'html'];
-  
+
   // Register hover provider
   const hoverProvider = new BaselineHoverProvider();
   supportedLanguages.forEach(language => {
@@ -32,7 +32,9 @@ export function activate(context: vscode.ExtensionContext): void {
     );
   });
 
-  // Register commands
+  // -------------------------
+  // Existing commands
+  // -------------------------
   context.subscriptions.push(
     vscode.commands.registerCommand('baselineToolkit.checkCurrentFile', () => {
       const activeEditor = vscode.window.activeTextEditor;
@@ -77,7 +79,52 @@ export function activate(context: vscode.ExtensionContext): void {
     })
   );
 
-  // Listen for document changes
+  // -------------------------
+  // NEW: Generate JSON + Open Dashboard
+  // -------------------------
+  context.subscriptions.push(
+    vscode.commands.registerCommand('baselineToolkit.generateJSONAndOpenDashboard', async () => {
+      const workspaceFolders = vscode.workspace.workspaceFolders;
+      if (!workspaceFolders) {
+        vscode.window.showWarningMessage('No workspace folder open');
+        return;
+      }
+
+      vscode.window.withProgress({
+        location: vscode.ProgressLocation.Notification,
+        title: 'Generating Baseline JSON...',
+        cancellable: false
+      }, async () => {
+        try {
+          const workspacePath = workspaceFolders[0].uri.fsPath;
+
+          // Run the CLI command using pnpm filter
+          // Adjust path if your CLI command is different
+          const cliCommand = `pnpm --filter cli run generate --workspace-root`;
+          exec(cliCommand, { cwd: workspacePath }, (err, stdout, stderr) => {
+            if (err) {
+              vscode.window.showErrorMessage(`Error generating JSON: ${stderr}`);
+              console.error(err);
+              return;
+            }
+            console.log(stdout);
+            vscode.window.showInformationMessage('Baseline JSON generated successfully!');
+
+            // Open dashboard in browser (replace with Vercel URL or localhost)
+            const dashboardUrl = 'https://your-dashboard-url.vercel.app'; // <-- replace with hosted URL
+            vscode.env.openExternal(vscode.Uri.parse(dashboardUrl));
+          });
+        } catch (err) {
+          vscode.window.showErrorMessage(`Unexpected error: ${err}`);
+          console.error(err);
+        }
+      });
+    })
+  );
+
+  // -------------------------
+  // Document listeners
+  // -------------------------
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument(event => {
       if (isSupported(event.document.languageId)) {
@@ -86,7 +133,6 @@ export function activate(context: vscode.ExtensionContext): void {
     })
   );
 
-  // Listen for document opens
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument(document => {
       if (isSupported(document.languageId)) {

@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { Shield, FileText, AlertTriangle, CheckCircle, TrendingUp, Settings } from 'lucide-react';
+import {
+  Shield,
+  FileText,
+  AlertTriangle,
+  CheckCircle /* TrendingUp, Settings */,
+} from 'lucide-react';
 import { OverviewCard } from './components/OverviewCard';
 import { SafetyChart } from './components/SafetyChart';
 import { RiskyFeaturesList } from './components/RiskyFeaturesList';
