@@ -1,10 +1,59 @@
 {
-  "totalFiles": 2,
-  "totalFeatures": 8,
-  "safeFeatures": 6,
-  "riskyFeatures": 2,
-  "safetyScore": 75,
+  "totalFiles": 5,
+  "totalFeatures": 12,
+  "safeFeatures": 7,
+  "riskyFeatures": 5,
+  "safetyScore": 58,
   "reports": [
+    {
+      "file": "src\\test\\example2.js",
+      "report": {
+        "safe": 0,
+        "risky": [
+          {
+            "id": "optional-chaining",
+            "baseline": false,
+            "support": {},
+            "location": {
+              "line": 11,
+              "column": 12
+            },
+            "value": "?."
+          },
+          {
+            "id": "nullish-coalescing",
+            "baseline": false,
+            "support": {},
+            "location": {
+              "line": 14,
+              "column": 17
+            },
+            "value": "??"
+          },
+          {
+            "id": "broadcastchannel",
+            "baseline": false,
+            "support": {},
+            "location": {
+              "line": 22,
+              "column": 16
+            },
+            "value": "new BroadcastChannel()"
+          }
+        ],
+        "total": 3,
+        "safetyScore": 0
+      }
+    },
+    {
+      "file": "src\\test\\example2.css",
+      "report": {
+        "safe": 1,
+        "risky": [],
+        "total": 1,
+        "safetyScore": 100
+      }
+    },
     {
       "file": "src\\test\\example.js",
       "report": {

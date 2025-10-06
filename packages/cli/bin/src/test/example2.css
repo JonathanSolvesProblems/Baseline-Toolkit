@@ -1,0 +1,27 @@
+/* Example CSS file with modern features */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f0f0f0, #ffffff);
+}
+
+.card {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  padding: 16px;
+  margin: 12px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.highlight {
+  color: #ff5722;
+  font-weight: bold;
+}
