@@ -103,6 +103,13 @@ program
         reports: reports.filter(r => r.report.total > 0),
       };
 
+      
+
+      // Save to file if requested
+      const outPath = resolve(process.cwd(), 'baseline-report.json');
+      writeFileSync(outPath, JSON.stringify(summary, null, 2));
+      console.log(chalk.green(`📁 Report saved to ${outPath}`));
+
       // Output results
       if (options.json) {
         console.log(JSON.stringify(summary, null, 2));
@@ -110,11 +117,7 @@ program
         printReport(summary);
       }
 
-      // Save to file if requested
-      const outPath = options.output
-        ? resolve(process.cwd(), options.output)
-        : resolve(process.cwd(), 'core/baseline-report.json');
-
+      
       const outDir = dirname(outPath);
       if (!existsSync(outDir)) {
         mkdirSync(outDir, { recursive: true });

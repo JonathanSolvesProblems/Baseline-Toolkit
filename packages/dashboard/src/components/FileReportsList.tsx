@@ -8,14 +8,8 @@ interface FileReportsListProps {
 
 export function FileReportsList({ reports, filters }: FileReportsListProps) {
   const filteredReports = reports.filter((report) => {
-    // If there are no risky features and "showSafe" is false, skip this report
+    // If there are no risky features and "showSafe" is false, skip
     if (report.report.risky.length === 0 && !filters.showSafe) return false;
-
-    // Check if there are any risky features (baseline === false)
-    const hasFalse = report.report.risky.some((f) => f.baseline === false);
-
-    // If there are risky features but "showFalse" is false, skip this report
-    if (hasFalse && !filters.showFalse) return false;
 
     return true;
   });
@@ -83,25 +77,19 @@ export function FileReportsList({ reports, filters }: FileReportsListProps) {
                   Risky Features ({report.report.risky.length})
                 </h5>
                 <div className="space-y-1">
-                  {report.report.risky.slice(0, 3).map((feature, idx) => (
+                  {report.report.risky.map((feature, idx) => (
                     <div key={idx} className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">{feature.id}</span>
-                      <span
-                        className={`px-2 py-0.5 rounded text-xs ${
-                          feature.baseline === false
-                            ? 'bg-error-100 text-error-700'
-                            : 'bg-warning-100 text-warning-700'
-                        }`}
-                      >
-                        {feature.baseline === false ? 'Not Baseline' : 'Baseline Safe'}
+                      <span className="text-gray-600">
+                        {feature.id}{' '}
+                        {feature.location
+                          ? `(line ${feature.location.line}, col ${feature.location.column})`
+                          : ''}
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-xs bg-error-100 text-error-700">
+                        Issue
                       </span>
                     </div>
                   ))}
-                  {report.report.risky.length > 3 && (
-                    <p className="text-sm text-gray-500">
-                      +{report.report.risky.length - 3} more features
-                    </p>
-                  )}
                 </div>
               </div>
             )}
@@ -111,7 +99,7 @@ export function FileReportsList({ reports, filters }: FileReportsListProps) {
               <div className="mt-3 pt-3 border-t border-gray-100">
                 <p className="text-sm text-gray-600 flex items-center">
                   <CheckCircle className="h-4 w-4 mr-1 text-success-500" />
-                  {report.report.safe} features are Baseline-safe
+                  {report.report.safe} features are safe
                 </p>
               </div>
             )}
