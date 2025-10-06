@@ -142,7 +142,7 @@ function App() {
                     Export detailed compatibility analysis
                   </div>
                 </div>
-
+                {/* 
                 <div className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
                   <AIButton
                     title="Check New Files"
@@ -151,9 +151,9 @@ function App() {
                     }
                   />
                   <div className="text-sm text-gray-500 mt-1">Scan workspace for changes</div>
-                </div>
+                </div> */}
 
-                <div className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                {/* <div className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
                   <AIButton
                     title="Upgrade Suggestions"
                     getPrompt={() =>
@@ -163,7 +163,7 @@ function App() {
                   <div className="text-sm text-gray-500 mt-1">
                     Get recommendations for risky features
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
