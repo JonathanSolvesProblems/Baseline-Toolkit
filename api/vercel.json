@@ -2,7 +2,9 @@
   "version": 2,
   "functions": {
     "ai.ts": {
-      "runtime": "nodejs20.x"
+      "runtime": "@vercel/node@2.9.0"
     }
-  }
+  },
+  "builds": [{ "src": "ai.ts", "use": "@vercel/node@2.9.0" }],
+  "routes": [{ "src": "/(.*)", "dest": "/ai.ts" }]
 }
