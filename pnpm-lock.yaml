@@ -185,10 +185,6 @@ importers:
         version: 5.4.20(@types/node@20.19.17)
 
   packages/extension:
-    dependencies:
-      '@baseline-toolkit/core':
-        specifier: workspace:*
-        version: link:../core
     devDependencies:
       '@types/jest':
         specifier: ^29.5.12
