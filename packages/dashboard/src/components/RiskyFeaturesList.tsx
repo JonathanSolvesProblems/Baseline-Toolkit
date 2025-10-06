@@ -1,4 +1,4 @@
-import { ExternalLink, AlertTriangle, Clock } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import type { FileReport, FilterOptions } from '../types';
 
 interface RiskyFeaturesListProps {
